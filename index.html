@@ -241,9 +241,9 @@
     }
 
     .reveal-emoji {
-      font-size: 68px;
+      font-size: 56px;
       display: block;
-      margin-bottom: 22px;
+      margin-bottom: 14px;
       animation: pulse 1.4s ease-in-out infinite alternate;
     }
     @keyframes pulse {
@@ -253,32 +253,32 @@
 
     .reveal-title {
       font-family: "Noto Serif TC", serif;
-      font-size: clamp(28px, 7.5vw, 50px);
+      font-size: clamp(26px, 7vw, 46px);
       font-weight: 700;
       color: var(--gold);
-      letter-spacing: 5px;
-      margin-bottom: 10px;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
     }
 
     .reveal-sub {
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 5px;
-      color: rgba(201, 169, 110, 0.5);
-      margin-bottom: 44px;
+      color: rgba(201, 169, 110, 0.45);
+      margin-bottom: 28px;
     }
 
     .reveal-card {
       background: rgba(255, 248, 240, 0.06);
       border: 1px solid rgba(201, 169, 110, 0.25);
       border-radius: 18px;
-      padding: 36px 30px;
+      padding: 32px 30px;
     }
 
     .reveal-card p {
       font-family: "Noto Serif TC", serif;
-      font-size: clamp(15px, 3.8vw, 19px);
-      line-height: 2.2;
-      margin-bottom: 22px;
+      font-size: clamp(15px, 3.8vw, 18px);
+      line-height: 2.1;
+      margin-bottom: 20px;
     }
     .reveal-card p:last-child {
       margin-bottom: 0;
@@ -286,24 +286,33 @@
 
     .funny {
       color: var(--gold);
-      font-size: clamp(18px, 4.5vw, 24px);
+      font-size: clamp(17px, 4.2vw, 22px);
       font-weight: 700;
     }
 
     .warm {
       color: rgba(255, 248, 240, 0.85);
       border-top: 1px solid rgba(201, 169, 110, 0.2);
-      padding-top: 22px;
+      padding-top: 20px;
     }
     .warm strong {
       color: #fff;
     }
 
+    .note {
+      font-size: clamp(13px, 3vw, 15px);
+      color: rgba(201, 169, 110, 0.6);
+      line-height: 2;
+      border-top: 1px dashed rgba(201, 169, 110, 0.15);
+      padding-top: 16px;
+    }
+
     .reveal-footer {
-      margin-top: 44px;
+      margin-top: 32px;
       font-size: 12px;
-      color: rgba(201, 169, 110, 0.35);
+      color: rgba(245, 222, 179, 0.8);
       letter-spacing: 2px;
+      text-shadow: 0 0 8px rgba(201, 169, 110, 0.4);
     }
 
     /* ── 彩帶 ── */
@@ -346,7 +355,7 @@
 
     <div class="pw-section">
       <p class="pw-hint" id="pw-hint-text" onclick="togglePw()">
-        🔐 &nbsp;有什麼悄悄話想說嗎？
+        🔐 &nbsp; 想說的話 
       </p>
       <div class="pw-form" id="pw-form">
         <input
@@ -357,47 +366,72 @@
           maxlength="20"
           onkeydown="if(event.key==='Enter') verify()"
         />
-        <button class="pw-btn" onclick="verify()">解 鎖</button>
+        <button class="pw-btn" onclick="verify()">已 解 鎖</button>
         <p class="pw-error" id="pw-error">密碼不對喔，再試一次 🙈</p>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════ 揭曉頁 ═══════════════ -->
+  <!-- ═══════════════ 揭曉頁（動態注入）═══════════════ -->
   <div class="page hidden" id="page-reveal">
     <canvas id="sparkle-canvas"></canvas>
 
     <div class="reveal-inner">
-      <span class="reveal-emoji">🤫</span>
-      <h1 class="reveal-title">好，我承認……</h1>
-      <p class="reveal-sub">THE SECRET IS OUT</p>
+      <span class="reveal-emoji" id="r-emoji"></span>
+      <h1 class="reveal-title" id="r-title"></h1>
+      <p class="reveal-sub" id="r-sub"></p>
 
       <div class="reveal-card">
-        <p class="funny">
-          哈哈！其實我早就知道了！<br />
-          你們的這個「驚喜」——<br />
-          從頭到尾都瞞不過我 😏
-        </p>
-        <p>
-          不過這樣說好像有點壞心，<br />
-          讓我換個角度說——
-        </p>
-        <p class="warm">
-          知道你們要來，<br />
-          我每天還是都很期待。<br /><br />
-          因為不管是驚喜還是驚嚇，<br />
-          重要的是你們願意出現在這裡。<br /><br />
-          <strong>這份心意，我收到了。謝謝你們。</strong>
-        </p>
+        <p class="funny" id="r-funny"></p>
+        <p id="r-bridge"></p>
+        <p class="warm" id="r-warm"></p>
+        <p class="note" id="r-note"></p>
       </div>
 
-      <p class="reveal-footer">— 一個早就知道、卻還是超感動的人 🎓 —</p>
+      <p class="reveal-footer" id="r-footer"></p>
     </div>
   </div>
 
   <script>
-    /* ── 可修改的密碼 ── */
-    const PASSWORD = "0000";
+    /* ══════════════════════════════════════════
+       各密碼對應的揭曉內容
+    ══════════════════════════════════════════ */
+    const REVEALS = {
+      "AP0523": {
+        emoji: "🤫",
+        title: "好，我承認……",
+        sub: "THE SECRET IS OUT",
+        funny: `哈哈哈哈哈！其實我早就察覺怪怪的了！<br />你們的這個「驚喜」——<br />從頭到尾都瞞不過我 😏`,
+        bridge: `不過這樣說好像有點壞，<br />讓我換個角度說——`,
+        warm: `在我發現你們要來，<br />我每天還是都很期待。<br /><br />因為不管是驚喜還是驚嚇，<br />重要的是你們願意出現在這裡。<br /><br /><strong>這份心意，我收到了。謝謝你們。</strong>`,
+        note: `至於為啥我會發現……<br />嘿嘿 😉 可能是日常的蛛絲馬跡讓我察覺了<br />就是說你們這群安瑟樂威的人們 !!!!🤭`,
+        footer: "— 一個早就發現但裝不知道、還是超感動的人 🎓 Hugo —"
+      },
+      "TONY": {
+        emoji: "💕",
+        title: "嘿，我就知道!",
+        sub: "YOU'RE MY BOY",
+        funny: `你一定不會安分地讓我度過畢業典禮的！<br />一直在問我你沒問你的同事嗎 ? 還有各種試探 😏<br />我就知道你在背後計劃什麼!`,
+        bridge: `不過說真的——`,
+        warm: `知道你在背後偷偷安排，<br />我心裡就已經很暖了。<br />
+        <br />謝謝你的規劃，<br />還有你過去的陪伴和一直以來的付出，你是我碩士生涯中最大的支柱。<br />
+        <br /><strong> 謝謝你，一直都在。 </strong>`,
+        note: `不過我還是不會把你的名字放在我的致謝放三頁大字 <br /> 但我還是很愛你 💕`,
+        footer: "— 很愛你的 Hugo🎓 —"
+      },
+      "TINA": {
+        emoji: "🌸",
+        title: "媽~媽~",
+        sub: "MY DEAREST MOM",
+        funny: `哈哈哈哈我畢業了!<br />雖然學士畢業因為疫情沒辦成功，但我靠一己之力彌補了這個遺憾😄<br />
+        謝謝你還特別撥空前來參加我的畢業典禮，<br />讓我這個遲來的大學畢業典禮終於圓滿了！`,
+        bridge: `但說真的——`,
+        warm: `走到今天的畢業典禮，<br />我最想謝謝的人是妳。<br /><br />你這二十幾年的付出，<br />不是一句話可以說完的。<br />
+        <br /><strong>謝謝你，媽媽。真的辛苦了。</strong>`,
+        note: `我想成為妳最驕傲的存在，也想成為你最大的支柱 🌸<br />`,
+        footer: "— 永遠是你的孩子 🎓 Hugo —"
+      }
+    };
 
     /* ── 密碼區顯示/隱藏 ── */
     function togglePw() {
@@ -410,8 +444,10 @@
     function verify() {
       const input = document.getElementById("pw-input");
       const err = document.getElementById("pw-error");
+      const key = input.value.trim();
 
-      if (input.value === PASSWORD) {
+      if (REVEALS[key]) {
+        renderReveal(key);
         triggerReveal();
       } else {
         err.style.display = "block";
@@ -420,6 +456,19 @@
         input.value = "";
         input.focus();
       }
+    }
+
+    /* ── 注入揭曉內容 ── */
+    function renderReveal(key) {
+      const d = REVEALS[key];
+      document.getElementById("r-emoji").textContent = d.emoji;
+      document.getElementById("r-title").textContent = d.title;
+      document.getElementById("r-sub").textContent = d.sub;
+      document.getElementById("r-funny").innerHTML = d.funny;
+      document.getElementById("r-bridge").innerHTML = d.bridge;
+      document.getElementById("r-warm").innerHTML = d.warm;
+      document.getElementById("r-note").innerHTML = d.note;
+      document.getElementById("r-footer").textContent = d.footer;
     }
 
     /* ── 過場 → 揭曉 ── */
