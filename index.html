@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>謝謝你們的支持</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cream: #fff8f0;
+      --gold: #c9a96e;
+      --deep-gold: #a07840;
+      --dark: #3d2b1f;
+      --text: #5c3d2e;
+      --muted: #9e7b65;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: "Noto Sans TC", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── 過場蒙版 ── */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--dark);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+    #overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ── 頁面通用 ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px 80px;
+    }
+    .page.hidden {
+      display: none;
+    }
+
+    /* ══════════════════════════════
+       感謝頁
+    ══════════════════════════════ */
+    #page-thanks {
+      background: linear-gradient(160deg, #fff8f0 0%, #fff0e0 55%, #fff8f0 100%);
+    }
+
+    .deco {
+      font-size: 26px;
+      letter-spacing: 12px;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .main-title {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(36px, 9vw, 60px);
+      font-weight: 700;
+      color: var(--dark);
+      letter-spacing: 6px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .main-sub {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 6px;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .divider {
+      width: 50px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 48px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(201, 169, 110, 0.35);
+      border-radius: 18px;
+      padding: 44px 36px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 40px rgba(201, 169, 110, 0.12);
+    }
+
+    .card p {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(16px, 4vw, 19px);
+      line-height: 2.1;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+    .card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .em {
+      font-weight: 700;
+      color: var(--deep-gold);
+    }
+
+    /* ── 密碼區 ── */
+    .pw-section {
+      margin-top: 56px;
+      text-align: center;
+    }
+
+    .pw-hint {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.3s;
+    }
+    .pw-hint:hover {
+      color: var(--gold);
+    }
+
+    .pw-form {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .pw-form.open {
+      display: flex;
+    }
+
+    .pw-input {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid var(--gold);
+      border-radius: 50px;
+      padding: 13px 28px;
+      font-size: 20px;
+      text-align: center;
+      letter-spacing: 10px;
+      width: 190px;
+      color: var(--dark);
+      outline: none;
+      font-family: "Noto Sans TC", sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .pw-input:focus {
+      border-color: var(--deep-gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.22);
+    }
+    .pw-input.shake {
+      border-color: #e07070;
+      animation: shake 0.42s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-9px); }
+      75%       { transform: translateX(9px); }
+    }
+
+    .pw-btn {
+      background: linear-gradient(135deg, var(--gold), var(--deep-gold));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 13px 36px;
+      font-size: 15px;
+      letter-spacing: 3px;
+      cursor: pointer;
+      font-family: "Noto Sans TC", sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pw-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(160, 120, 64, 0.38);
+    }
+    .pw-btn:active {
+      transform: translateY(0);
+    }
+
+    .pw-error {
+      font-size: 13px;
+      color: #c96060;
+      letter-spacing: 1px;
+      display: none;
+    }
+
+    /* ══════════════════════════════
+       揭曉頁
+    ══════════════════════════════ */
+    #page-reveal {
+      background: linear-gradient(150deg, #1a0a00 0%, #2d1500 45%, #1a0a00 100%);
+      color: #fff8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #sparkle-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .reveal-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 560px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .reveal-emoji {
+      font-size: 68px;
+      display: block;
+      margin-bottom: 22px;
+      animation: pulse 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes pulse {
+      from { transform: scale(1) rotate(-3deg); }
+      to   { transform: scale(1.1) rotate(3deg); }
+    }
+
+    .reveal-title {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(28px, 7.5vw, 50px);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 5px;
+      margin-bottom: 10px;
+    }
+
+    .reveal-sub {
+      font-size: 12px;
+      letter-spacing: 5px;
+      color: rgba(201, 169, 110, 0.5);
+      margin-bottom: 44px;
+    }
+
+    .reveal-card {
+      background: rgba(255, 248, 240, 0.06);
+      border: 1px solid rgba(201, 169, 110, 0.25);
+      border-radius: 18px;
+      padding: 36px 30px;
+    }
+
+    .reveal-card p {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(15px, 3.8vw, 19px);
+      line-height: 2.2;
+      margin-bottom: 22px;
+    }
+    .reveal-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .funny {
+      color: var(--gold);
+      font-size: clamp(18px, 4.5vw, 24px);
+      font-weight: 700;
+    }
+
+    .warm {
+      color: rgba(255, 248, 240, 0.85);
+      border-top: 1px solid rgba(201, 169, 110, 0.2);
+      padding-top: 22px;
+    }
+    .warm strong {
+      color: #fff;
+    }
+
+    .reveal-footer {
+      margin-top: 44px;
+      font-size: 12px;
+      color: rgba(201, 169, 110, 0.35);
+      letter-spacing: 2px;
+    }
+
+    /* ── 彩帶 ── */
+    .confetti {
+      position: fixed;
+      border-radius: 2px;
+      animation: fall linear forwards;
+      pointer-events: none;
+      z-index: 300;
+    }
+    @keyframes fall {
+      from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="overlay"></div>
+
+  <!-- ═══════════════ 感謝頁 ═══════════════ -->
+  <div class="page" id="page-thanks">
+    <p class="deco">✦ &nbsp; ✦ &nbsp; ✦</p>
+    <h1 class="main-title">謝謝你們</h1>
+    <p class="main-sub">THANK YOU FOR YOUR LOVE</p>
+    <div class="divider"></div>
+
+    <div class="card">
+      <p>走到今天，<br />不是我一個人的事。</p>
+      <p>
+        你們每一份陪伴、每一句加油、<br />
+        每一個默默付出的心意——<br />
+        我都感受到了。
+      </p>
+      <p>
+        這一刻，我想好好說一聲：<br />
+        <span class="em">謝謝你們，真的。</span>
+      </p>
+    </div>
+
+    <div class="pw-section">
+      <p class="pw-hint" id="pw-hint-text" onclick="togglePw()">
+        🔐 &nbsp;有什麼悄悄話想說嗎？
+      </p>
+      <div class="pw-form" id="pw-form">
+        <input
+          type="password"
+          class="pw-input"
+          id="pw-input"
+          placeholder="· · · ·"
+          maxlength="20"
+          onkeydown="if(event.key==='Enter') verify()"
+        />
+        <button class="pw-btn" onclick="verify()">解 鎖</button>
+        <p class="pw-error" id="pw-error">密碼不對喔，再試一次 🙈</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 揭曉頁 ═══════════════ -->
+  <div class="page hidden" id="page-reveal">
+    <canvas id="sparkle-canvas"></canvas>
+
+    <div class="reveal-inner">
+      <span class="reveal-emoji">🤫</span>
+      <h1 class="reveal-title">好，我承認……</h1>
+      <p class="reveal-sub">THE SECRET IS OUT</p>
+
+      <div class="reveal-card">
+        <p class="funny">
+          哈哈！其實我早就知道了！<br />
+          你們的這個「驚喜」——<br />
+          從頭到尾都瞞不過我 😏
+        </p>
+        <p>
+          不過這樣說好像有點壞心，<br />
+          讓我換個角度說——
+        </p>
+        <p class="warm">
+          知道你們要來，<br />
+          我每天還是都很期待。<br /><br />
+          因為不管是驚喜還是驚嚇，<br />
+          重要的是你們願意出現在這裡。<br /><br />
+          <strong>這份心意，我收到了。謝謝你們。</strong>
+        </p>
+      </div>
+
+      <p class="reveal-footer">— 一個早就知道、卻還是超感動的人 🎓 —</p>
+    </div>
+  </div>
+
+  <script>
+    /* ── 可修改的密碼 ── */
+    const PASSWORD = "0000";
+
+    /* ── 密碼區顯示/隱藏 ── */
+    function togglePw() {
+      const form = document.getElementById("pw-form");
+      const open = form.classList.toggle("open");
+      if (open) setTimeout(() => document.getElementById("pw-input").focus(), 80);
+    }
+
+    /* ── 密碼驗證 ── */
+    function verify() {
+      const input = document.getElementById("pw-input");
+      const err = document.getElementById("pw-error");
+
+      if (input.value === PASSWORD) {
+        triggerReveal();
+      } else {
+        err.style.display = "block";
+        input.classList.add("shake");
+        setTimeout(() => input.classList.remove("shake"), 450);
+        input.value = "";
+        input.focus();
+      }
+    }
+
+    /* ── 過場 → 揭曉 ── */
+    function triggerReveal() {
+      const overlay = document.getElementById("overlay");
+      overlay.classList.add("active");
+
+      setTimeout(() => {
+        document.getElementById("page-thanks").classList.add("hidden");
+        const revealPage = document.getElementById("page-reveal");
+        revealPage.classList.remove("hidden");
+
+        setTimeout(() => {
+          overlay.classList.remove("active");
+          launchConfetti();
+          startSparkles();
+        }, 120);
+      }, 550);
+    }
+
+    /* ── 彩帶動畫 ── */
+    function launchConfetti() {
+      const colors = ["#C9A96E", "#FFD700", "#E8C49A", "#F0E0C0", "#D4A860", "#FFF0C0", "#A07840"];
+      for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+          const el = document.createElement("div");
+          el.className = "confetti";
+          el.style.cssText = `
+            left: ${Math.random() * 100}vw;
+            width: ${Math.random() * 7 + 4}px;
+            height: ${Math.random() * 12 + 8}px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            border-radius: ${Math.random() > 0.5 ? "50%" : "2px"};
+            animation-duration: ${Math.random() * 2.5 + 2}s;
+          `;
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 5000);
+        }, i * 25);
+      }
+    }
+
+    /* ── 星塵粒子背景 ── */
+    function startSparkles() {
+      const canvas = document.getElementById("sparkle-canvas");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      const dots = Array.from({ length: 70 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.8 + 0.4,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        a: Math.random(),
+        da: (Math.random() > 0.5 ? 1 : -1) * 0.007,
+      }));
+
+      (function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        dots.forEach((d) => {
+          d.x = (d.x + d.vx + canvas.width) % canvas.width;
+          d.y = (d.y + d.vy + canvas.height) % canvas.height;
+          d.a += d.da;
+          if (d.a >= 1 || d.a <= 0) d.da *= -1;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(201,169,110,${d.a * 0.55})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      })();
+    }
+  </script>
+</body>
+</html>
